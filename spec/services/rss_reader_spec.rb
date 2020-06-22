@@ -32,7 +32,8 @@ RSpec.describe RssReader, type: :service, vcr: true do
 
       # the result within the approval file depends on the feed
       # not fetching comments is baked into this
-      verify(format: :txt) { articles.length }
+      # verify(format: :txt) { articles.length }
+      expect(articles.length).to eq(21)
     end
 
     it "does not recreate articles if they already exist", vcr: { cassette_name: "rss_reader_fetch_articles_twice" } do

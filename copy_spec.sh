@@ -1,7 +1,7 @@
 #!/bin/bash
 
 specs=(
-  spec/requests/internal/configs
+  spec/services/rss_reader
 )
 num_copies=10
 
