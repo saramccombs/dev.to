@@ -32,7 +32,6 @@ class RssReader
   def create_articles_for_user(user)
     user.update_column(:feed_fetched_at, Time.current)
     feed = fetch_rss(user.feed_url.strip)
-    puts "done fetching"
     articles = []
 
     feed.entries.reverse_each do |item|
@@ -49,7 +48,6 @@ class RssReader
         },
       )
     end
-    puts "ALL articles fetched"
     articles
   rescue StandardError => e
     log_error(
@@ -72,18 +70,17 @@ class RssReader
   end
 
   def fetch_rss(url)
-    puts "start fetch_rss"
     xml = HTTParty.get(url).body
-    puts "end fetch_rss"
     Feedjira.parse xml
   end
 
   def make_from_rss_item(item, user, feed)
     return if medium_reply?(item) || article_exists?(user, item)
+    puts "*" * 100
     puts "make_from_rss_item post if statement #{item.url}, #{user.id}"
 
     feed_source_url = item.url.strip.split("?source=")[0]
-    article = Article.create(
+    article = Article.new(
       feed_source_url: feed_source_url,
       user_id: user.id,
       published_from_feed: true,
@@ -93,6 +90,8 @@ class RssReader
     )
     puts "article created. #{article.valid?}"
     puts "article created. #{article.errors.full_messages}"
+    article.save
+    puts "article saved"
     Slack::Messengers::ArticleFetchedFeed.call(article: article)
 
     article
