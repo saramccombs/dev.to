@@ -1,9 +1,7 @@
 class RssReader
   class Assembler
     def self.call(item, user, feed, feed_source_url)
-      markdown = new(item, user, feed, feed_source_url).assemble
-      puts "markdown CREATED"
-      markdown
+      new(item, user, feed, feed_source_url).assemble
     end
 
     def initialize(item, user, feed, feed_source_url)
@@ -16,7 +14,6 @@ class RssReader
     end
 
     def assemble
-      puts "Assembler assemble"
       body = <<~HEREDOC
         ---
         title: #{@title}
@@ -28,7 +25,7 @@ class RssReader
 
         #{assemble_body_markdown}
       HEREDOC
-      puts "BODY assembled #{body}"
+
       body.strip
     end
 

@@ -83,8 +83,7 @@ class RssReader
     puts "make_from_rss_item post if statement #{item.url}, #{user.id}"
 
     feed_source_url = item.url.strip.split("?source=")[0]
-    puts "feed_source_url #{feed_source_url}"
-    article = Article.create!(
+    article = Article.create(
       feed_source_url: feed_source_url,
       user_id: user.id,
       published_from_feed: true,
@@ -92,7 +91,8 @@ class RssReader
       body_markdown: RssReader::Assembler.call(item, user, feed, feed_source_url),
       organization_id: nil,
     )
-    puts "article created"
+    puts "article created. #{article.valid?}"
+    puts "article created. #{article.errors.full_messages}"
     Slack::Messengers::ArticleFetchedFeed.call(article: article)
 
     article
