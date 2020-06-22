@@ -79,7 +79,6 @@ class RssReader
   end
 
   def make_from_rss_item(item, user, feed)
-    puts "make_from_rss_item #{item.url}, #{user.id}"
     return if medium_reply?(item) || article_exists?(user, item)
     puts "make_from_rss_item post if statement #{item.url}, #{user.id}"
 

@@ -1,5 +1,6 @@
 class HtmlCleaner
   def clean_html(html)
+    puts "starting HTML cleaning"
     doc = Nokogiri::HTML(html)
     # Remove Medium tracking pixel
     doc.css("img").each do |img|
@@ -15,6 +16,7 @@ class HtmlCleaner
     end
 
     doc.xpath("//@class").remove
+    puts "end HTML cleaning"
     doc.to_html
   end
 end

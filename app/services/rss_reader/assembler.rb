@@ -46,11 +46,11 @@ class RssReader
         convert(cleaned_content, github_flavored: true).
         gsub("```\n\n```", "").
         gsub(/&nbsp;|\u00A0/, " ")
-
+      puts "ReverseMarkdown DONE"
       content.gsub!(/{%\syoutube\s(.{11,18})\s%}/) do |tag|
         tag.gsub("\\_", "_")
       end
-
+      puts "Tag gsub DONE"
       content
     end
 
