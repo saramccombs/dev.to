@@ -1,7 +1,9 @@
 class RssReader
   class Assembler
     def self.call(item, user, feed, feed_source_url)
-      new(item, user, feed, feed_source_url).assemble
+      markdown = new(item, user, feed, feed_source_url).assemble
+      puts "markdown CREATED"
+      markdown
     end
 
     def initialize(item, user, feed, feed_source_url)
@@ -26,7 +28,7 @@ class RssReader
 
         #{assemble_body_markdown}
       HEREDOC
-
+      puts "BODY assembled #{body}"
       body.strip
     end
 
@@ -46,11 +48,11 @@ class RssReader
         convert(cleaned_content, github_flavored: true).
         gsub("```\n\n```", "").
         gsub(/&nbsp;|\u00A0/, " ")
-      puts "ReverseMarkdown DONE"
+
       content.gsub!(/{%\syoutube\s(.{11,18})\s%}/) do |tag|
         tag.gsub("\\_", "_")
       end
-      puts "Tag gsub DONE"
+
       content
     end
 
