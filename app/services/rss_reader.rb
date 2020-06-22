@@ -49,7 +49,7 @@ class RssReader
         },
       )
     end
-
+    puts "ALL articles fetched"
     articles
   rescue StandardError => e
     log_error(
@@ -79,6 +79,7 @@ class RssReader
   end
 
   def make_from_rss_item(item, user, feed)
+    puts "make_from_rss_item #{item}, #{user.id}"
     return if medium_reply?(item) || article_exists?(user, item)
 
     feed_source_url = item.url.strip.split("?source=")[0]
@@ -90,9 +91,9 @@ class RssReader
       body_markdown: RssReader::Assembler.call(item, user, feed, feed_source_url),
       organization_id: nil,
     )
-
+    puts "make_from_rss_item  BEFORE slack #{item}, #{user.id}"
     Slack::Messengers::ArticleFetchedFeed.call(article: article)
-
+    puts "make_from_rss_item  AFTER slack #{item}, #{user.id}"
     article
   end
 
