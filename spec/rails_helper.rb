@@ -67,56 +67,56 @@ Rack::Attack.enabled = false
 Browser::Bot.matchers.delete(Browser::Bot::EmptyUserAgentMatcher)
 
 RSpec.configure do |config|
-  config.use_transactional_fixtures = true
-  # config.use_transactional_fixtures = false
+  # config.use_transactional_fixtures = true
+  config.use_transactional_fixtures = false
 
-  class ActiveRecord::Base
-    class_attribute :shared_connection
+  # class ActiveRecord::Base
+  #   class_attribute :shared_connection
 
-    def self.connection
-      self.shared_connection || retrieve_connection
-    end
-  end
-
-  config.before do |example|
-    ActiveRecord::Base.shared_connection = ActiveRecord::Base.connection
-
-    # if Capybara.current_driver == :webkit
-    #   DatabaseCleaner.strategy = :deletion
-    # else
-    #   DatabaseCleaner.strategy = :transaction
-    # end
-
-    # DatabaseCleaner.start
-  end
-
-  # config.after do
-  #   DatabaseCleaner.clean
+  #   def self.connection
+  #     self.shared_connection || retrieve_connection
+  #   end
   # end
 
-  #   config.before(:suite) do
-  #   DatabaseCleaner.clean_with(:truncation)
-  # end
+  # config.before do |example|
+  #   ActiveRecord::Base.shared_connection = ActiveRecord::Base.connection
 
-  # config.before do
-  #   DatabaseCleaner.strategy = :transaction
-  # end
+  #   # if Capybara.current_driver == :webkit
+  #   #   DatabaseCleaner.strategy = :deletion
+  #   # else
+  #   #   DatabaseCleaner.strategy = :transaction
+  #   # end
 
-  # config.before(:each, type: :system) do
-  #   DatabaseCleaner.strategy = :truncation
-  # end
-
-  # config.before(:each, js: true) do
-  #   DatabaseCleaner.strategy = :truncation
-  # end
-
-  # config.before do
-  #   DatabaseCleaner.start
+  #   # DatabaseCleaner.start
   # end
 
   # config.after do
   #   DatabaseCleaner.clean
   # end
+
+  config.before(:suite) do
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
+  config.before do
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  config.before(:each, type: :system) do
+    DatabaseCleaner.strategy = :truncation
+  end
+
+  config.before(:each, js: true) do
+    DatabaseCleaner.strategy = :truncation
+  end
+
+  config.before do
+    DatabaseCleaner.start
+  end
+
+  config.after do
+    DatabaseCleaner.clean
+  end
 
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
