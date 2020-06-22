@@ -1,35 +1,5 @@
 ENV["RAILS_ENV"] = "test"
 require "knapsack_pro"
-
-# ENV['KNAPSACK_PRO_TEST_FILE_PATTERN']="spec/services/rss_reader_spec.rb"
-
-# module KnapsackPro
-#   module Runners
-#     class RSpecRunner < BaseRunner
-#       def self.run(args)
-#         ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
-#         ENV['KNAPSACK_PRO_RECORDING_ENABLED'] = 'true'
-
-#         require 'rspec/core/rake_task'
-
-#         task_name = 'knapsack_pro:rspec_run'
-#         if Rake::Task.task_defined?(task_name)
-#           Rake::Task[task_name].clear
-#         end
-
-#         RSpec::Core::RakeTask.new(task_name) do |t|
-#           # we cannot pass runner.test_file_paths array to t.pattern
-#           # because pattern does not accept test example path like spec/a_spec.rb[1:2]
-#           # instead we pass test files and test example paths to t.rspec_opts
-#           t.pattern = []
-#           t.rspec_opts = "#{args} --default-path spec spec/services/rss_reader_spec.rb"
-#         end
-#         Rake::Task[task_name].invoke
-#       end
-#     end
-#   end
-# end
-
 KnapsackPro::Adapters::RSpecAdapter.bind
 
 require "spec_helper"
@@ -98,6 +68,56 @@ Browser::Bot.matchers.delete(Browser::Bot::EmptyUserAgentMatcher)
 
 RSpec.configure do |config|
   config.use_transactional_fixtures = true
+  # config.use_transactional_fixtures = false
+
+  class ActiveRecord::Base
+    class_attribute :shared_connection
+
+    def self.connection
+      self.shared_connection || retrieve_connection
+    end
+  end
+
+  config.before do |example|
+    ActiveRecord::Base.shared_connection = ActiveRecord::Base.connection
+
+    # if Capybara.current_driver == :webkit
+    #   DatabaseCleaner.strategy = :deletion
+    # else
+    #   DatabaseCleaner.strategy = :transaction
+    # end
+
+    # DatabaseCleaner.start
+  end
+
+  # config.after do
+  #   DatabaseCleaner.clean
+  # end
+
+  #   config.before(:suite) do
+  #   DatabaseCleaner.clean_with(:truncation)
+  # end
+
+  # config.before do
+  #   DatabaseCleaner.strategy = :transaction
+  # end
+
+  # config.before(:each, type: :system) do
+  #   DatabaseCleaner.strategy = :truncation
+  # end
+
+  # config.before(:each, js: true) do
+  #   DatabaseCleaner.strategy = :truncation
+  # end
+
+  # config.before do
+  #   DatabaseCleaner.start
+  # end
+
+  # config.after do
+  #   DatabaseCleaner.clean
+  # end
+
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
   config.include ApplicationHelper

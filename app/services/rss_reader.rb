@@ -90,8 +90,6 @@ class RssReader
     )
     puts "article created. #{article.valid?}"
     puts "article created. #{article.errors.full_messages}"
-    # article.save
-    puts "article saved"
     Slack::Messengers::ArticleFetchedFeed.call(article: article)
 
     article
