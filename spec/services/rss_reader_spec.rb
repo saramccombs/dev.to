@@ -12,6 +12,7 @@ RSpec.describe RssReader, type: :service, vcr: true do
 
   # Override the default Rails logger as these tests require the Timber logger.
   before do
+    puts "RssReader before everything block"
     timber_logger = Timber::Logger.new(nil)
     Rails.logger = ActiveSupport::TaggedLogging.new(timber_logger)
   end
@@ -20,6 +21,7 @@ RSpec.describe RssReader, type: :service, vcr: true do
 
   describe "#get_all_articles" do
     before do
+      puts "RssReader before get_all_articles block"
       [link, nonmedium_link, nonpermanent_link].each do |feed_url|
         create(:user, feed_url: feed_url)
       end

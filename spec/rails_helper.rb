@@ -1,5 +1,35 @@
 ENV["RAILS_ENV"] = "test"
 require "knapsack_pro"
+
+# ENV['KNAPSACK_PRO_TEST_FILE_PATTERN']="spec/services/rss_reader_spec.rb"
+
+# module KnapsackPro
+#   module Runners
+#     class RSpecRunner < BaseRunner
+#       def self.run(args)
+#         ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
+#         ENV['KNAPSACK_PRO_RECORDING_ENABLED'] = 'true'
+
+#         require 'rspec/core/rake_task'
+
+#         task_name = 'knapsack_pro:rspec_run'
+#         if Rake::Task.task_defined?(task_name)
+#           Rake::Task[task_name].clear
+#         end
+
+#         RSpec::Core::RakeTask.new(task_name) do |t|
+#           # we cannot pass runner.test_file_paths array to t.pattern
+#           # because pattern does not accept test example path like spec/a_spec.rb[1:2]
+#           # instead we pass test files and test example paths to t.rspec_opts
+#           t.pattern = []
+#           t.rspec_opts = "#{args} --default-path spec spec/services/rss_reader_spec.rb"
+#         end
+#         Rake::Task[task_name].invoke
+#       end
+#     end
+#   end
+# end
+
 KnapsackPro::Adapters::RSpecAdapter.bind
 
 require "spec_helper"
@@ -90,10 +120,12 @@ RSpec.configure do |config|
   end
 
   config.before(:suite) do
+    puts "before suite block Elasticesearch"
     Search::Cluster.recreate_indexes
   end
 
   config.before do
+    puts "before suite each block Sidekiq"
     # Worker jobs shouldn't linger around between tests
     Sidekiq::Worker.clear_all
   end
@@ -125,11 +157,13 @@ RSpec.configure do |config|
   end
 
   config.after do
+    puts "after SiteConfig block"
     SiteConfig.clear_cache
   end
 
   # Only turn on VCR if :vcr is included metadata keys
   config.around do |ex|
+    puts "around each block"
     if ex.metadata.key?(:vcr)
       ex.run
     else
@@ -138,6 +172,7 @@ RSpec.configure do |config|
   end
 
   config.before do
+    puts "before each stub block"
     stub_request(:any, /res.cloudinary.com/).to_rack("dsdsdsds")
 
     stub_request(:post, /api.fastly.com/).
@@ -172,10 +207,12 @@ RSpec.configure do |config|
   end
 
   config.after do
+    puts "after Timecop block"
     Timecop.return
   end
 
   config.after(:suite) do
+    puts "after WebMock.disable_net_connect!( block"
     WebMock.disable_net_connect!(
       allow_localhost: true,
       allow: [

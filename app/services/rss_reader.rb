@@ -32,7 +32,7 @@ class RssReader
   def create_articles_for_user(user)
     user.update_column(:feed_fetched_at, Time.current)
     feed = fetch_rss(user.feed_url.strip)
-
+    puts "done fetching"
     articles = []
 
     feed.entries.reverse_each do |item|
@@ -72,7 +72,9 @@ class RssReader
   end
 
   def fetch_rss(url)
+    puts "start fetch_rss"
     xml = HTTParty.get(url).body
+    puts "end fetch_rss"
     Feedjira.parse xml
   end
 
