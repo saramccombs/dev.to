@@ -79,10 +79,12 @@ class RssReader
   end
 
   def make_from_rss_item(item, user, feed)
-    puts "make_from_rss_item #{item}, #{user.id}"
+    puts "make_from_rss_item #{item.url}, #{user.id}"
     return if medium_reply?(item) || article_exists?(user, item)
+    puts "make_from_rss_item post if statement #{item.url}, #{user.id}"
 
     feed_source_url = item.url.strip.split("?source=")[0]
+    puts "feed_source_url #{feed_source_url}"
     article = Article.create!(
       feed_source_url: feed_source_url,
       user_id: user.id,
@@ -91,9 +93,9 @@ class RssReader
       body_markdown: RssReader::Assembler.call(item, user, feed, feed_source_url),
       organization_id: nil,
     )
-    puts "make_from_rss_item  BEFORE slack #{item}, #{user.id}"
+    puts "article created"
     Slack::Messengers::ArticleFetchedFeed.call(article: article)
-    puts "make_from_rss_item  AFTER slack #{item}, #{user.id}"
+
     article
   end
 

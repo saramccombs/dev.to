@@ -14,6 +14,7 @@ class RssReader
     end
 
     def assemble
+      puts "Assembler assemble"
       body = <<~HEREDOC
         ---
         title: #{@title}
